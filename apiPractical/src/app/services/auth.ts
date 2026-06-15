@@ -31,16 +31,22 @@ export class Auth {
     return this.http.post<LoginResponse>(this.apiUrl, data);
   }
 
+  getCurrentUser() {
+  return this.http.get('https://dummyjson.com/auth/me');
+}
+
   saveToken(token: string): void {
     localStorage.setItem('token', token);
   }
 
   getToken(): string | null {
     return localStorage.getItem('token');
+
   }
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('currentUser')
   }
 
   isLoggedIn(): boolean {
@@ -48,20 +54,34 @@ export class Auth {
   }
 
 register(user: RegisterUser): void {
-  localStorage.setItem('registeredUser', JSON.stringify(user));
+  const users = this.getRegisteredUser();
+  users.push(user);
+  localStorage.setItem('registeredUser', JSON.stringify(users));
 }
 
-getRegisteredUser(): RegisterUser | null {
+getRegisteredUser(): RegisterUser [] {
   const user = localStorage.getItem('registeredUser');
-  return user ? JSON.parse(user) : null;
+  if (!user){
+    return[]
+  }
+  const parsedUser =JSON.parse(user)
+  return Array.isArray(parsedUser) ? parsedUser : [parsedUser]
 }
 
 isRegisteredUser(username: string, password: string): boolean {
-  const user = this.getRegisteredUser();
+  const users = this.getRegisteredUser();
 
-  return !!user &&
+  return users.some(user =>
     user.username === username &&
-    user.password === password;
+    user.password === password
+  )
+   
+}
+saveCurrentUser(username:string):void{
+  localStorage.setItem('currentUser', username);
+}
+getCurrentUserName():string | null {
+  return localStorage.getItem('currentUser')
 }
 
 }

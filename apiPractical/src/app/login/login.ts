@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component,OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../services/auth';
 import { Router, RouterLink } from '@angular/router';
@@ -10,7 +10,7 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit{
   errorMessage = '';
   loading = false;
 
@@ -26,6 +26,9 @@ export class Login {
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
+  ngOnInit(): void {
+  this.auth.logout();
+}
 
   onLogin(): void {
     if (this.loginForm.invalid) {
@@ -43,19 +46,10 @@ export class Login {
      return
     }
 
-    this.auth.login({
-      username:'emilys',
-      password:'emilyspass'
-    }).subscribe({
-      next: (res) => {
-        this.auth.saveToken(res.accessToken);
-        this.loading = false;
-        this.router.navigate(['/dashboard']);
-      },
-      error: () => {
-        this.loading = false;
-        this.errorMessage = 'Invalid username or password';
-      },
-    });
+    this.auth.saveToken('local-token');
+    this.auth.saveCurrentUser(loginData.username);
+    this.loading = false;
+    this.router.navigate(['/dashboard'], { replaceUrl: true });
+    
   }
 }
