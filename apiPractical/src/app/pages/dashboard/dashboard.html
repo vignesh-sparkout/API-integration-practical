@@ -2,6 +2,26 @@
   <section class="dashboard-card">
     <h1>Welcome to Dashboard</h1>
     <p *ngIf="user">Logged in as: {{ user.username }}</p>
+
+    <button (click)="getData()">GET</button>
+    <button (click)="postData()">POST</button>
+    <button (click)="putData()">PUT</button>
+    <button (click)="patchData()">PATCH</button>
+    <button (click)="deleteData()">DELETE</button>
     <button (click)="logout()">Logout</button>
+    
+
+    <ul>
+      <li *ngFor="let post of posts">
+        {{ post.id }} - {{ post.title }}
+      </li>
+    </ul>
+    <li *ngFor="let post of posts">
+  {{ post.id }} - {{ post.title }}
+
+  <button (click)="deleteByPost(post.id!)">Delete by POST</button>
+  <button (click)="deleteByPut(post.id!)">Delete by PUT</button>
+  <button (click)="deleteByPatch(post.id!)">Delete by PATCH</button>
+</li>
   </section>
 </div>
